@@ -4,7 +4,7 @@ CC = gcc
 # -Wall 打开大部分警告信息
 CFLAGS = -g -Wall
 
-DXTOBJS = dxt.o entrance.o foundation.o sqlite3.o
+DXTOBJS = entrance.o foundation.o 
 
 SQLOBJS = sqlite3.o sqltest.o
 
@@ -16,7 +16,7 @@ dxt: $(DXTOBJS)
 sqltest: $(SQLOBJS)
 	$(CC) $(CFLAGS) -o sqltest $(SQLOBJS)
 
-entrance.o: entrance.c entrance.h
+entrance.o: entrance.c 
 	$(CC) $(CFLAGS) -c -o entrance.o entrance.c
 
 foundation.o: foundation.c foundation.h
