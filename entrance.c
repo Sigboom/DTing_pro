@@ -6,27 +6,29 @@
  ************************************************************************/
 
 #include "foundation.h"
+#include "guard.h"
 
-#define WAIT     bigboom->wait
-#define GETORDER bigboom->getOrder
-#define DOORDER  bigboom->doOrder
-
-int wait_test();
+void signboard();
+void portal();
 
 int main() {
-    Waiter* bigboom = NULL;
-    waiterInit(bigboom);
-    bigboom->wait = wait_test;
-    while(WAIT()) {
-        GETORDER();
-        DOORDER();
+    signboard();
+    Guard *daniel = guard_init("daniel");
+    if (daniel->open(daniel->name)) {
+        portal();
+    } else {
+        daniel->attack();  
     }
+    free(daniel);
     return 0;
 }
 
-int wait_test() {
-    printf("-------\n");
-    sleep(2);
-    return 0;
+void signboard() {
+    printf("Welcome to DXTing~~\n");
+    return ;
 }
 
+void portal() {
+    printf("portal is runing~\n");
+    return ;
+}
