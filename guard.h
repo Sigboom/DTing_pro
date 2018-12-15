@@ -20,7 +20,7 @@ typedef struct Guard {
     void (*attack)();
 } Guard;
 
-int open(char*);
+int open_eye(char*);
 void attack();
 
 int getLine(char sentence[], int maxsent) {
@@ -38,75 +38,40 @@ int getLine(char sentence[], int maxsent) {
 Guard*guard_init(char*name) {
     Guard*new_guard = (Guard*)malloc(sizeof(Guard));
     new_guard->name = name;
-    new_guard->open = &open;
+    new_guard->open = &open_eye;
     new_guard->attack = &attack;
     return new_guard;
 }
 
-int is_check (FILE *fp) {
-    return 1;
+//实现在文件中提取关键字对应的值
+char *get_con_val(char *path, const char* key) {
+    char *value = (char *)malloc(sizeof(char) * MAXLEN);
+    strcpy(value, "root");
+    return value;
+}
+
+//检查激活文件
+int check_key(char *key_path) {
+    char *key = get_con_val(key_path, "key.dxt");
+    if (strcmp(key, "root") == 0) return 1;
+    return 0;
 }
 
 int understand (char *say) {
     return 0;
 }
 
-int open(char*name) {
+//身份审核
+int open_eye(char*name) {
     printf("My name is %s!\n", name);
-    FILE*key;
-    int license = 0;
-    char say[MAXLEN];
-    if ((key = fopen("key.dxt", "r+")) == NULL) {
-        license = -1;
-    }
-    while (True) {
-        if (license == -1) {
-            FILE*NY = fopen("come.say", "r");
-            if (NY != NULL) {
-                int i = 0;
-                while (fscanf(NY, "%s", say) != EOF) {
-                    if (i == 0) {
-                        printf("%s >> ", name);
-                    } else {
-                        printf("\t");
-                    }
-                    printf("%s\n", say);
-                }
-                while (getLine(say, MAXLEN)) {
-                    if(understand(say)) {
-                        Register *Xabi = register_init("Xabi");
-                        Xabi->open();
-                        if (Xabi->getInfo()) {
-                            return 1;
-                        } else {
-                            return 0;
-                        }
-                    } else {
-                        printf("%s >> ", name);
-                        printf("pardon?\n");
-                    }
-                }
-            } else {
-                printf("%s >> ", name);
-                printf("What Should I say when you firsh come here?\n");
-                NY = fopen("come.say", "w");
-                scanf("%s", say);
-                fprintf(NY, "%s", say);
-                fclose(NY);
-            }
-        } else {
-            printf("reading license~~\n");
-            if (is_check(key)) {
-                return 1;
-            }
-        }
-    }
+    char 
+    if (check_key(key_path)) return 1;
     return 0;
 }
 
 void attack() {
     printf("attack is runing~\n");
-    return ;
+    exit(1);
 }
 
 #endif

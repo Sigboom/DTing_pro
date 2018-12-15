@@ -7,6 +7,8 @@
 
 #include "foundation.h"
 
+#define NAME 20
+
 void waiterInit(Waiter*);
 int waiting();
 void getOrder();
@@ -48,7 +50,7 @@ void run() {
 }
 
 char*getName() {
-    char* temp = (char*)malloc(sizeof(char) * (MAXNAME + 1));
+    char* temp = (char*)malloc(sizeof(char) * (NAME + 1));
     printf("What is waiter's name?\n");
     printf(">> ");
     scanf("%s", temp);
