@@ -12,7 +12,8 @@
 
 #define True 1
 #define False 0
-#define MAXLEN 300
+#define MAXLEN 200
+#define MAXNAME 30
 
 typedef struct Guard {
     char *name;
@@ -20,8 +21,19 @@ typedef struct Guard {
     void (*attack)();
 } Guard;
 
+typedef struct Env {
+    char *key[MAXLEN];
+    char *value[MAXLEN];
+    int max, cnt;
+    char *(*getval) (char *);
+    int (*get_val_num) (char *);
+    void (*setval)(char *, const char *);
+    void (*show_env)();
+} Env;
+
 int open_eye(char*);
 void attack();
+
 
 int getLine(char sentence[], int maxsent) {
     int length = 0;
@@ -51,9 +63,7 @@ char *get_con_val(char *path, const char* key) {
 }
 
 //检查激活文件
-int check_key(char *key_path) {
-    char *key = get_con_val(key_path, "key.dxt");
-    if (strcmp(key, "root") == 0) return 1;
+int check_key() {
     return 0;
 }
 
@@ -63,9 +73,8 @@ int understand (char *say) {
 
 //身份审核
 int open_eye(char*name) {
-    printf("My name is %s!\n", name);
-    char 
-    if (check_key(key_path)) return 1;
+    printf("My name is %s!\n", name); 
+    if (check_key()) return 1;
     return 0;
 }
 

@@ -15,7 +15,6 @@
 #include <unistd.h>
 
 #define MAXID 10000
-#define MAXNAME 20
 
 typedef struct Memory {
     int askTimes;
