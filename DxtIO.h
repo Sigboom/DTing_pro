@@ -1,12 +1,12 @@
 /*************************************************************************
-	> File Name: fundamental.h
+	> File Name: DxtIO.h
 	> Author: Daniel
 	> Mail: 292382967@qq.com
-	> Created Time: 二  7/10 23:10:02 2018
+	> Created Time: 二  1/29 17:29:43 2019
  ************************************************************************/
 
-#ifndef _FUNDAMENTAL_H
-#define _FUNDAMENTAL_H
+#ifndef _DXTIO_H
+#define _DXTIO_H
 
 #include <stdio.h>
 #include <string.h>
@@ -21,5 +21,7 @@ extern void desktop();
 extern void nextDesk();
 extern int DTExit();
 extern void notFoundDesk(char*str);
+
+
 
 #endif

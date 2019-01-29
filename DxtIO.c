@@ -1,11 +1,11 @@
 /*************************************************************************
-	> File Name: fundamental.c
+	> File Name: DxtIO.c
 	> Author: Daniel
 	> Mail: 292382967@qq.com
-	> Created Time: 二  7/10 23:10:56 2018
+	> Created Time: 二  1/29 17:30:42 2019
  ************************************************************************/
 
-#include "fundamental.h"
+#include <stdio.h>
 #include "order.h"
 
 void DTPrint() {
@@ -67,5 +67,6 @@ void notFoundDesk(char*str) {
     DTPrint();
     printf("What is \"%s\"? I can't understand...\n" NONE, str);
 }
+
 
 
