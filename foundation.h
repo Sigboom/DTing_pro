@@ -15,6 +15,20 @@
 #include <unistd.h>
 
 #define MAXID 10000
+#define MAXLEN 200
+#define MAXNAME 30
+
+typedef struct Env {
+    char *key[MAXLEN];
+    char *value[MAXLEN];
+    int max, cnt;
+    char *(*getval) (char *);
+    int (*get_val_num) (char *);
+    void (*setval)(char *, const char *);
+    void (*show_env)();
+} Env;
+
+Env env;
 
 typedef struct Memory {
     int askTimes;

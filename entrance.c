@@ -20,8 +20,6 @@ typedef struct DXMap {
 void signboard();
 void portal();
 
-Env env;
-
 void clear(Guard *g) {
     free(g);
     for (int i = 0; i < env.cnt; ++i) {

@@ -12,24 +12,12 @@
 
 #define True 1
 #define False 0
-#define MAXLEN 200
-#define MAXNAME 30
 
 typedef struct Guard {
     char *name;
     int (*open)();
     void (*attack)();
 } Guard;
-
-typedef struct Env {
-    char *key[MAXLEN];
-    char *value[MAXLEN];
-    int max, cnt;
-    char *(*getval) (char *);
-    int (*get_val_num) (char *);
-    void (*setval)(char *, const char *);
-    void (*show_env)();
-} Env;
 
 int open_eye(char*);
 void attack();
