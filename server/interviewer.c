@@ -1,183 +1,237 @@
-/*************************************************************************
-	> File Name: sqltest.c
-	> Author: Daniel
-	> Mail: 292382967@qq.com
-	> Created Time: 三  2/ 6 13:38:07 2019
- ************************************************************************/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
+#include <time.h>
 #include <sqlite3.h>
+#include <stdarg.h>
+#include "DxtIO.h"
 
-#define NAMELEN 30
-#define eshow(varb, type) ({            \
-                            char type_format[4] = "";                    \
-                            if (strcmp(#type, "char") == 0)              \
-                            strcpy(type_format, "%d");                   \
-                            else if (strcmp(#type, "int") == 0)          \
-                            strcpy(type_format, "%d");                   \
-                            else if (strcmp(#type, "long") == 0)         \
-                            strcpy(type_format, "%ld");                  \
-                            else if (strcmp(#type, "float") == 0)        \
-                            strcpy(type_format, "%.2f");                 \
-                            else if (strcmp(#type, "double") == 0)       \
-                            strcpy(type_format, "%.2lf");                \
-                            else if (strcmp(#type, "char *") == 0)       \
-                            strcpy(type_format, "%s");                   \
-                            else if (strcmp(#type, "char*") == 0)       \
-                            strcpy(type_format, "%s");                   \
-                            else if (strcmp(#type, "unsigned int") == 0) \
-                            strcpy(type_format, "%u");                   \
-                            else printf("%s is not easy type!\n", #type);\
-                            if (strcmp(type_format, "") != 0) {          \
-                                printf("%s = ", #varb);                  \
-                                printf(type_format, varb);               \
-                                printf("\n");                            \
-                            }})
-
-
+/*
+typedef struct Query {
+    char *key;
+    int size, len;
+} Query;
 typedef struct Dxt {
     sqlite3 *db;
     char *name;
+    Query *query;
+    char *rerrmsg;
 } Dxt;
+*/
+
+#define INTERVIEWER(a) printf("Dxt: %s\n", a)
+
+/*
+int main() {
+    char *res = PASTE("a", "b");
+    eshow(res, char *);
+    free(res);
+    return 0;
+}
+*/
+
+int order_call(void *order_num, int argc, char **argv,char **col) {
+    int *temp = (int *)order_num;
+    *temp = atoi(argv[0]);
+    return 0;
+}
+
+int star_name_call(void *star_name, int argc, char **argv, char **col) {
+    char **temp = (char **)star_name;
+    strcpy(*temp, argv[0]);
+    return 0;
+}
 
 int callback(void *pv,int argc,char **argv,char **col)
 {
-    int cnt_i = 0;
-    for(cnt_i =0;cnt_i < argc;cnt_i++)
-        printf("%s\t%s\n",col[cnt_i],argv[cnt_i]);
+    Dxt *temp = (Dxt *)pv;
+    for(int cnt_i = 0; cnt_i < argc; cnt_i++) {
+        //printf("%s\t%s\n",col[cnt_i],argv[cnt_i]);
+        eshow(temp->name, char *);
+        eshow(argc, int);
+        printf("%s\n", argv[cnt_i]);
+    }
     printf("\n");
     return 0;
 }
 
-int name_check(char *name) {
-    if (strlen(name) > NAMELEN) {
-        printf("Your database name is too long!\n");
-        return 0;
-    }
-    if (!islower(name[0]) && !isupper(name[0]) && (name[0] != '_')) {
-        printf("The database name should begin with alphabet or '_'.\n");
-        return 0;
-    }
-    for (int i = 0; name[i]; ++i) {
-        if (!islower(name[i]) && !isupper(name[i]) && !isdigit(name[i]) && name[i] != '_' && name[i] != '.') {
-            printf("The database name should not contain special characters\n");
+int init_env(Dxt *user) { 
+    if (user == NULL) return 0;
+    int result = 0;
+    char *sql = "CREATE TABLE ORDERMENU("    \
+    "ORDERNAME TEXT PRIMARY KEY NOT NULL,"    \
+    "ORDERNUM INT8 NOT NULL);";
+    
+    result = sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg);
+    if(result != 0) {
+        if (strcmp("table ORDERMENU already exists", user->rerrmsg)) {
+            printf("creat table err:%s\n",user->rerrmsg);
+            sqlite3_free(user->rerrmsg);
             return 0;
         }
     }
-    return 1;
-}
-
-void dxt_clear(Dxt *dxt) {
-    free(dxt->name);
-    free(dxt);
-    return ;
-}
-
-Dxt *dxt_login(int argc, char **args) {
-    Dxt *new_user = (Dxt *)malloc(sizeof(Dxt));
-    new_user->name = (char *)calloc(sizeof(char), NAMELEN);
-    strcpy(new_user->name, "dxt_sample.db");
-    char answer[50];
-    if (argc != 1) { 
-        if (name_check(args[1])) {
-            int len  = strlen(args[1]);
-            strcpy(new_user->name, args[1]);
-            if (len < 4 || new_user->name[len - 1] != 'b' || 
-                new_user->name[len - 2] != 'd' || new_user->name[len - 3] != '.')
-                strcat(new_user->name, ".db");
-        } else {
-            printf("I'm go to sleep!\n");
-            dxt_clear(new_user);
-            return NULL;
-        }
-    } else {
-        printf("You want to use default database name(dxt_sample.db)? (y/n)\n"); 
-        scanf("%s", answer);
-        if (strcmp(answer, "Y") && strcmp(answer, "yes") && strcmp(answer, "y") && strcmp(answer, "1")) {
-            for (int i = 0; i < 3; i++) {
-                printf("input your database name: ");
-                scanf("%s", answer);
-                if (!name_check(answer)) continue;
-                int len  = strlen(answer);
-                strcpy(new_user->name, answer);
-                if (len < 4 || new_user->name[len - 1] != 'b' || 
-                    new_user->name[len - 2] != 'd' || new_user->name[len - 3] != '.')
-                strcat(new_user->name, ".db");
-                break;
-            }
-            if (!name_check(answer)) {
-                printf("I'm go to sleep!\n");
-                dxt_clear(new_user);
-                return NULL;
-            }
+    #ifdef DEBUG
+    printf("create table successfully!\n");
+    #endif
+    sql = "CREATE TABLE STARMENU("    \
+    "STARNAME TEXT PRIMARY KEY NOT NULL,"    \
+    "STAROWNER TEXT NOT NULL,"    \
+    "STARNUM INT8 NOT NULL);";
+    
+    result = sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg);
+    if(result != 0) {
+        if (strcmp("table STARMENU already exists", user->rerrmsg)) {
+            printf("creat table err:%s\n",user->rerrmsg);
+            sqlite3_free(user->rerrmsg);
+            return 0;
         }
     }
     #ifdef DEBUG
-    eshow(new_user->name, char *);
+    printf("create table successfully!\n");
     #endif
-    result = sqlite3_open(new_user->name, &new_user->db);
-    if(result > 0) {
-        printf("open database err:%s\n",sqlite3_errmsg(new_user->db));
-        return NULL;
+    sql = "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"        \
+    "VALUES('exit', 0);"                                     \
+    "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
+    "VALUES('add star', 100);"                                   \
+    "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
+    "VALUES('please ask', 200);"                                    \
+    "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
+    "VALUES('show star', 300);"                                    \
+    "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
+    "VALUES('testpot', 190226001);"; 
+
+    result = sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg);
+    if(result != 0) {
+        if (strcmp(user->rerrmsg, "column ORDERNAME is not unique")) {
+            printf("insert data err:%s\n",user->rerrmsg);
+            sqlite3_free(user->rerrmsg);
+            return 0;
+        }
     }
-    printf("open database successfully!\n");
-    return new_user;
+    #ifdef DEBUG
+    printf("insert data successfully!\n");
+    #endif
+    return 1;
+}
+
+int get_order_num(Query *query, sqlite3 *db) {
+    int order_num = -1;
+    char *rerrmsg = NULL;
+    char *sql_select = PASTE("SELECT ORDERNUM FROM ORDERMENU WHERE ORDERNAME == '", query->key, "';");
+    
+    if(sqlite3_exec(db, sql_select, order_call, (void *)&order_num, &rerrmsg)) order_num = -1;
+    free(sql_select);
+    sqlite3_free(rerrmsg);
+    return order_num;
+}
+
+int get_star_num(Query *query, sqlite3 *db) {
+    int star_num = -1;
+    char *rerrmsg = NULL; 
+    char *sql_select = PASTE("SELECT STARNUM FROM STARMENU WHERE STARNAME == '", query->key, "';");
+    
+    if (sqlite3_exec(db, sql_select, order_call, (void *)&star_num, &rerrmsg)) star_num = -1;
+    free(sql_select);
+    sqlite3_free(rerrmsg);
+    return star_num;
+}
+
+int make_star_num() {
+    srand(time(NULL));
+    return rand() % 1000 + 1;
+}
+
+char *get_star_name(sqlite3 *db, int star_num) {
+    char *rerrmsg = NULL, *star_name = NULL;
+    char *sql_select = PASTE("SELECT STARNAME FROM STARMENU WHERE ORDERNUM == '", itoa(star_num), "';");
+    
+    if (sqlite3_exec(db, sql_select, star_name_call, (void *)&star_name, &rerrmsg)) star_name = NULL;
+    free(sql_select);
+    sqlite3_free(rerrmsg);
+    return star_name;
+}
+
+int insert_star(Dxt *user) {
+    int star_num = make_star_num();
+    while (get_star_name(user->db, star_num)) star_num = make_star_num();
+    eshow(star_num, int);
+    char *sql = PASTE("INSERT INTO STARMENU(STARNAME, STAROWNER, STARNUM) VALUES('",
+                      user->query->key, "', '", user->name, "', ", itoa(star_num), ");"); 
+
+    if(sqlite3_exec(user->db, sql, callback, NULL, &user->rerrmsg)) {
+        if (strcmp(user->rerrmsg, "column ORDERNAME is not unique")) {
+            printf("insert data err:%s\n",user->rerrmsg);
+            sqlite3_free(user->rerrmsg);
+            return 0;
+        }
+    }
+    #ifdef DEBUG
+    printf("insert data successfully!\n");
+    #endif
+    free(sql);
+    return 1;
+}
+
+int star_empty(sqlite3 *db) {
+    int num;
+    char *rerrmsg = NULL, *sql = "SELECT COUNT(STARNAME) FROM STARMENU";
+    if(sqlite3_exec(db, sql, order_call, (void *)&num, &rerrmsg)) num = 1;
+    eshow(num, int);
+    sqlite3_free(rerrmsg);
+    return !num;
+}
+
+char *must_get_star_name(sqlite3 *db) {
+    if (star_empty(db)) return NULL;
+    char *star_name = NULL;
+    while (1) {
+        star_name = get_star_name(db, make_star_num());
+        if (star_name) return star_name;
+    }
+    return NULL;
+}
+
+void exec_order(Dxt *user, int order_num) {
+    switch (order_num) {
+        case 0: return ;
+        case 100:
+            INTERVIEWER("please you star name:");
+            dxt_getline(user->query);
+            if(get_star_num(user->query, user->db) == -1) { 
+                if (insert_star(user)) printf("You can try it!\n");
+                else printf("insert star die!\n");
+            } else printf("This star had been made!\n");
+            break;
+        case 200:
+            if (star_empty(user->db))  printf("No star has been made!\n"); 
+            char *star_name = NULL;
+            star_name = must_get_star_name(user->db);
+            printf("star is %s\n", star_name); 
+            break;
+        case 300:
+            INTERVIEWER("Which star you like?");
+            dxt_getline(user->query);
+            int star_num = get_star_num(user->query, user->db);
+            eshow(star_num, int);
+            break;
+        default:
+            printf("can't find this order!\n");
+            eshow(order_num, int);    
+    }
+    return ;
 }
 
 int main(int argc, char **args) {
-    int result = 0;
-    char *rerrmsg = NULL;
-    char *sql = NULL;
-    char *data = "callback";
-    
+    int order_num = 1;
     Dxt *user = dxt_login(argc, args);
-    if (user == NULL) return 0;
-    
-    sql = "CREATE TABLE STUDENT("    \
-    "NUM INT PRIMARY KEY NOT NULL,"    \
-    "NAME TEXT NOT NULL,"        \
-    "AGE INT NOT NULL,"        \
-    "SORCE REAL);";
-
-    result = sqlite3_exec(user->db,sql,callback,NULL,&rerrmsg);
-    if(result != 0) {
-        printf("creat table err:%s\n",rerrmsg);
-        sqlite3_free(rerrmsg);
-        return -2;
+    order_num = init_env(user);
+    while (order_num) {
+        dxt_getline(user->query);
+        order_num = get_order_num(user->query, user->db);
+        exec_order(user, order_num);
     }
-    printf("create table successfully!\n");
-
-    sql = "INSERT INTO STUDENT(NUM,NAME,AGE,SORCE)"        \
-    "VALUES(1,'Paul',13,99.1);"                    \
-    "INSERT INTO STUDENT(NUM,NAME,AGE,SORCE)"        \
-    "VALUES(2,'Kate',15,94.1);"                    \
-    "INSERT INTO STUDENT(NUM,NAME,AGE,SORCE)"        \
-    "VALUES(3,'Jim',12,95.1);"                    \
-    "INSERT INTO STUDENT(NUM,NAME,AGE,SORCE)"        \
-    "VALUES(4,'Tom',13,99.4);"                    \
-    "INSERT INTO STUDENT(NUM,NAME,AGE,SORCE)"        \
-    "VALUES(5,'Jack',13,89.1);";
-
-    result = sqlite3_exec(user->db,sql,callback,NULL,&rerrmsg);
-    if(result != 0) {
-        printf("insert data err:%s\n",rerrmsg);
-        sqlite3_free(rerrmsg);
-        return -3;
-    }
-    printf("insert data successfully!\n");
-    sql = "SELECT * FROM STUDENT";
-    result = sqlite3_exec(user->db,sql,callback,(void *)data,&rerrmsg);
-    if(result != 0) {
-        printf("select data err:%s\n",rerrmsg);
-        sqlite3_free(rerrmsg);
-        return -4;
-    }
-    printf("select data successfully!\n");
-    sqlite3_close(user->db);
-
     dxt_clear(user);
     return 0;
 }
