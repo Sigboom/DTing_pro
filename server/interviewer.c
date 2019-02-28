@@ -7,6 +7,7 @@
 #include <sqlite3.h>
 #include <stdarg.h>
 #include "DxtIO.h"
+#include "printColor.h"
 
 /*
 typedef struct Query {
@@ -21,17 +22,17 @@ typedef struct Dxt {
 } Dxt;
 */
 
-#define INTERVIEWER(a) printf("Dxt: %s\n", a)
+#define INTERVIEWER(a) printf(L_BLUE"Dxt:"NONE " %s\n", a)
 
 /*
-int main() {
-    char *res = PASTE("a", "b");
-    eshow(res, char *);
-    free(res);
+int main() { 
+    time_t t;
+    time(&t);
+    eshow(ctime(&t), char *);
     return 0;
+
 }
 */
-
 int order_call(void *order_num, int argc, char **argv,char **col) {
     int *temp = (int *)order_num;
     *temp = atoi(argv[0]);
@@ -48,7 +49,6 @@ int callback(void *pv,int argc,char **argv,char **col)
 {
     Dxt *temp = (Dxt *)pv;
     for(int cnt_i = 0; cnt_i < argc; cnt_i++) {
-        //printf("%s\t%s\n",col[cnt_i],argv[cnt_i]);
         eshow(temp->name, char *);
         eshow(argc, int);
         printf("%s\n", argv[cnt_i]);
@@ -59,40 +59,34 @@ int callback(void *pv,int argc,char **argv,char **col)
 
 int init_env(Dxt *user) { 
     if (user == NULL) return 0;
-    int result = 0;
     char *sql = "CREATE TABLE ORDERMENU("    \
     "ORDERNAME TEXT PRIMARY KEY NOT NULL,"    \
     "ORDERNUM INT8 NOT NULL);";
     
-    result = sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg);
-    if(result != 0) {
+    if(sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg)) {
         if (strcmp("table ORDERMENU already exists", user->rerrmsg)) {
             printf("creat table err:%s\n",user->rerrmsg);
             sqlite3_free(user->rerrmsg);
             return 0;
         }
     }
-    #ifdef DEBUG
-    printf("create table successfully!\n");
-    #endif
     sql = "CREATE TABLE STARMENU("    \
     "STARNAME TEXT PRIMARY KEY NOT NULL,"    \
     "STAROWNER TEXT NOT NULL,"    \
+    "STAROTIME TEXT NOT NULL,"    \
     "STARNUM INT8 NOT NULL);";
     
-    result = sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg);
-    if(result != 0) {
+    if (sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg)) {
         if (strcmp("table STARMENU already exists", user->rerrmsg)) {
             printf("creat table err:%s\n",user->rerrmsg);
             sqlite3_free(user->rerrmsg);
             return 0;
         }
     }
-    #ifdef DEBUG
-    printf("create table successfully!\n");
-    #endif
     sql = "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"        \
     "VALUES('exit', 0);"                                     \
+    "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
+    "VALUES('add star', 100);"                                   \
     "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
     "VALUES('add star', 100);"                                   \
     "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
@@ -102,17 +96,13 @@ int init_env(Dxt *user) {
     "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
     "VALUES('testpot', 190226001);"; 
 
-    result = sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg);
-    if(result != 0) {
+    if (sqlite3_exec(user->db,sql,callback,NULL,&user->rerrmsg)) {
         if (strcmp(user->rerrmsg, "column ORDERNAME is not unique")) {
             printf("insert data err:%s\n",user->rerrmsg);
             sqlite3_free(user->rerrmsg);
             return 0;
         }
     }
-    #ifdef DEBUG
-    printf("insert data successfully!\n");
-    #endif
     return 1;
 }
 
@@ -155,10 +145,12 @@ char *get_star_name(sqlite3 *db, int star_num) {
 
 int insert_star(Dxt *user) {
     int star_num = make_star_num();
+    time_t t;
+    time(&t);
     while (get_star_name(user->db, star_num)) star_num = make_star_num();
     eshow(star_num, int);
-    char *sql = PASTE("INSERT INTO STARMENU(STARNAME, STAROWNER, STARNUM) VALUES('",
-                      user->query->key, "', '", user->name, "', ", itoa(star_num), ");"); 
+    char *sql = PASTE("INSERT INTO STARMENU(STARNAME, STAROWNER, STAROTIME, STARNUM) VALUES('",
+                      user->query->key, "', '", user->name, "', ", ctime(&t), "',", itoa(star_num), ");"); 
 
     if(sqlite3_exec(user->db, sql, callback, NULL, &user->rerrmsg)) {
         if (strcmp(user->rerrmsg, "column ORDERNAME is not unique")) {
@@ -193,7 +185,16 @@ char *must_get_star_name(sqlite3 *db) {
     return NULL;
 }
 
+int isNumber(char *str) {
+    for (int i = 0; str[i]; ++i) {
+        if (str[i] >= 9 && str[i] <= 0) return 0;
+    }
+    return 1;
+}
+
 void exec_order(Dxt *user, int order_num) {
+    char *star_name = NULL;
+    int star_num = 0;
     switch (order_num) {
         case 0: return ;
         case 100:
@@ -206,14 +207,16 @@ void exec_order(Dxt *user, int order_num) {
             break;
         case 200:
             if (star_empty(user->db))  printf("No star has been made!\n"); 
-            char *star_name = NULL;
             star_name = must_get_star_name(user->db);
             printf("star is %s\n", star_name); 
             break;
         case 300:
             INTERVIEWER("Which star you like?");
             dxt_getline(user->query);
-            int star_num = get_star_num(user->query, user->db);
+            if (isNumber(user->query->key))
+                star_name = get_star_name(user->db, atoi(user->query->key));
+            else star_num = get_star_num(user->query, user->db);
+            eshow(star_name, char *);
             eshow(star_num, int);
             break;
         default:
