@@ -1,31 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct RBTNode {
-    int key, color;
-    struct RBTNode *lchild, *rchild;
-} RBTNode;
-
-enum color_t {
-    RED, BLACK, DOUBLE_BLACK
-} color_t;
+typedef struct DxtStar {
+    unsigned long num;
+    char *name;
+} DxtStar;
 
 RBTNode *NIL;
 
 __attribute__((constructor)) void init_NIL() {
     NIL = (RBTNode *)malloc(sizeof(RBTNode));
-    NIL->key = 0;
+    NIL->ds.num = 0;
     NIL->color = BLACK;
     NIL->lchild = NIL->rchild = NIL;
     return ;
-}
-
-RBTNode *init(int key) {
-    RBTNode *node = (RBTNode *)malloc(sizeof(RBTNode));
-    node->key = key;
-    node->color = RED;
-    node->lchild = node->rchild = NIL;
-    return node;
 }
 
 int has_red_child(RBTNode *node) {
@@ -70,20 +58,6 @@ RBTNode *insert_maintain(RBTNode *root) {
     }
     root->color = RED;
     root->lchild->color = root->rchild->color = BLACK;
-    return root;
-}
-
-RBTNode *__insert(RBTNode *root, int val) {
-    if (root == NULL || root == NIL) return init(val);
-    if (root->key == val) return root;
-    if (root->key > val) root->lchild = __insert(root->lchild, val);
-    else root->rchild = __insert(root->rchild, val);
-    return insert_maintain(root);
-}
-
-RBTNode *insert(RBTNode *root, int val) {
-    root = __insert(root, val);
-    root->color = BLACK;
     return root;
 }
 
@@ -159,7 +133,7 @@ RBTNode *__erase(RBTNode *root, int val) {
     return erase_maintain(root);
 }
 
-RBTNode *erase(RBTNode *root, int val) {
+RBTNode *rb_erase(RBTNode *root, int val) {
     root = __erase(root, val);
     root->color = BLACK;
     return root;

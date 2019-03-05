@@ -14,10 +14,12 @@ typedef struct Query {
     char *key;
     int size, len;
 } Query;
+
 typedef struct Dxt {
     sqlite3 *db;
-    char *name;
     Query *query;
+    RBTNode *rbtree;
+    char *name;
     char *rerrmsg;
 } Dxt;
 */
@@ -33,6 +35,22 @@ int main() {
 
 }
 */
+
+typedef struct RBTNode {
+    int color;
+    DxtStar ds;
+    struct RBTNode *lchild, *rchild;
+} RBTNode;
+
+int rb_call(void *p, int argc, char **argv, char **col) {
+    RBTNode *rbtree = (RBTNode *)p;
+    for (int i = 0; i < argc; ++i) {
+       eshow(argv[i], char *);
+        // strcpy(rbtree->star_name, argv[i]);
+    }
+    return 0;
+}
+
 int order_call(void *order_num, int argc, char **argv,char **col) {
     int *temp = (int *)order_num;
     *temp = atoi(argv[0]);
@@ -88,8 +106,6 @@ int init_env(Dxt *user) {
     "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
     "VALUES('add star', 100);"                                   \
     "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
-    "VALUES('add star', 100);"                                   \
-    "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
     "VALUES('please ask', 200);"                                    \
     "INSERT INTO ORDERMENU(ORDERNAME,ORDERNUM)"              \
     "VALUES('show star', 300);"                                    \
@@ -103,6 +119,8 @@ int init_env(Dxt *user) {
             return 0;
         }
     }
+    sql = "SELECT STARNAME, STARNUM FROM STARMENU;";
+    if(sqlite3_exec(user->db, sql, rb_call, (void *)&user->rbtree, &user->rerrmsg)) return 0;
     return 1;
 }
 
@@ -143,6 +161,41 @@ char *get_star_name(sqlite3 *db, int star_num) {
     return star_name;
 }
 
+enum color_t {
+    RED, BLACK, DOUBLE_BLACK
+} color_t;
+
+RBTNode *init(DxtStar *ds) {
+    RBTNode *node = (RBTNode *)malloc(sizeof(RBTNode));
+    node->ds.num = ds->num;
+    node->ds.name = ds->name;
+    node->color = RED;
+    node->lchild = node->rchild = NIL;
+    return node;
+}
+
+RBTNode *__insert(RBTNode *root, DxtStar *ds) {
+    if (root == NULL || root == NIL) return init(ds);
+    if (root->key == val) return root;
+    if (root->key > val) root->lchild = __insert(root->lchild, ds);
+    else root->rchild = __insert(root->rchild, ds);
+    return insert_maintain(root);
+}
+
+RBTNode *rb_insert(RBTNode *root, DxtStar *ds) {
+    root = __insert(root, ds);
+    root->color = BLACK;
+    return root;
+}
+
+int __insert_star(Dxt *user, int star_num, char *star_name) {
+    DxtStar *ds = (DxtStar *)malloc(sizeof(DxtStar));
+    ds->num = star_num;
+    ds->name = strdup(star_name);
+    user->rbtree = rb_insert(user->rbtree, ds);
+    return 1;
+}
+
 int insert_star(Dxt *user) {
     int star_num = make_star_num();
     time_t t;
@@ -150,8 +203,8 @@ int insert_star(Dxt *user) {
     while (get_star_name(user->db, star_num)) star_num = make_star_num();
     eshow(star_num, int);
     char *sql = PASTE("INSERT INTO STARMENU(STARNAME, STAROWNER, STAROTIME, STARNUM) VALUES('",
-                      user->query->key, "', '", user->name, "', ", ctime(&t), "',", itoa(star_num), ");"); 
-
+                      user->query->key, "', '", user->name, "', '", ctime(&t), "',", itoa(star_num), ");"); 
+    
     if(sqlite3_exec(user->db, sql, callback, NULL, &user->rerrmsg)) {
         if (strcmp(user->rerrmsg, "column ORDERNAME is not unique")) {
             printf("insert data err:%s\n",user->rerrmsg);
@@ -162,8 +215,9 @@ int insert_star(Dxt *user) {
     #ifdef DEBUG
     printf("insert data successfully!\n");
     #endif
+    //TODO
     free(sql);
-    return 1;
+    return __insert_star(user, star_num, user->query->key);
 }
 
 int star_empty(sqlite3 *db) {
