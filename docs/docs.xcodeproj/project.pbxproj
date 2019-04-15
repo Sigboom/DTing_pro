@@ -6,6 +6,11 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		65FD0CD72264A144006C0B83 /* entrance.c in Sources */ = {isa = PBXBuildFile; fileRef = 65FD0CD22264A143006C0B83 /* entrance.c */; };
+		65FD0CD82264A144006C0B83 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 65FD0CD32264A143006C0B83 /* Makefile */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		65FD0CBD22648FEC006C0B83 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -21,6 +26,18 @@
 /* Begin PBXFileReference section */
 		65FD0CBF22648FEC006C0B83 /* docs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = docs; path = /Users/daniel/Coder/Xcoder/dxt/docs/build/Debug/docs; sourceTree = "<absolute>"; };
 		65FD0CCA226493ED006C0B83 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		65FD0CCB2264A143006C0B83 /* tags */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tags; path = ../tags; sourceTree = "<group>"; };
+		65FD0CCC2264A143006C0B83 /* foundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = foundation.h; path = ../foundation.h; sourceTree = "<group>"; };
+		65FD0CCD2264A143006C0B83 /* key.dxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key.dxt; path = ../key.dxt; sourceTree = "<group>"; };
+		65FD0CCE2264A143006C0B83 /* piShow.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = piShow.py; path = ../piShow.py; sourceTree = "<group>"; };
+		65FD0CCF2264A143006C0B83 /* temp */ = {isa = PBXFileReference; lastKnownFileType = folder; name = temp; path = ../temp; sourceTree = "<group>"; };
+		65FD0CD02264A143006C0B83 /* DXT结构图.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = "DXT结构图.pdf"; path = "../DXT结构图.pdf"; sourceTree = "<group>"; };
+		65FD0CD12264A143006C0B83 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = guard.h; path = ../guard.h; sourceTree = "<group>"; };
+		65FD0CD22264A143006C0B83 /* entrance.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = entrance.c; path = ../entrance.c; sourceTree = "<group>"; };
+		65FD0CD32264A143006C0B83 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../Makefile; sourceTree = "<group>"; };
+		65FD0CD42264A143006C0B83 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		65FD0CD52264A143006C0B83 /* register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = register.h; path = ../register.h; sourceTree = "<group>"; };
+		65FD0CD62264A143006C0B83 /* server */ = {isa = PBXFileReference; lastKnownFileType = folder; name = server; path = ../server; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +54,18 @@
 		65FD0CB622648FEC006C0B83 = {
 			isa = PBXGroup;
 			children = (
+				65FD0CD02264A143006C0B83 /* DXT结构图.pdf */,
+				65FD0CD22264A143006C0B83 /* entrance.c */,
+				65FD0CCC2264A143006C0B83 /* foundation.h */,
+				65FD0CD12264A143006C0B83 /* guard.h */,
+				65FD0CCD2264A143006C0B83 /* key.dxt */,
+				65FD0CD32264A143006C0B83 /* Makefile */,
+				65FD0CCE2264A143006C0B83 /* piShow.py */,
+				65FD0CD42264A143006C0B83 /* README.md */,
+				65FD0CD52264A143006C0B83 /* register.h */,
+				65FD0CD62264A143006C0B83 /* server */,
+				65FD0CCB2264A143006C0B83 /* tags */,
+				65FD0CCF2264A143006C0B83 /* temp */,
 				65FD0CCA226493ED006C0B83 /* index.html */,
 			);
 			sourceTree = "<group>";
@@ -97,6 +126,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65FD0CD82264A144006C0B83 /* Makefile in Sources */,
+				65FD0CD72264A144006C0B83 /* entrance.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
