@@ -6,10 +6,6 @@
 	objectVersion = 50;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		65FD0CC322648FEC006C0B83 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FD0CC222648FEC006C0B83 /* main.cpp */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		65FD0CBD22648FEC006C0B83 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -23,9 +19,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		65FD0CBF22648FEC006C0B83 /* docs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = docs; sourceTree = BUILT_PRODUCTS_DIR; };
-		65FD0CC222648FEC006C0B83 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		65FD0CC92264914E006C0B83 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		65FD0CBF22648FEC006C0B83 /* docs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = docs; path = /Users/daniel/Coder/Xcoder/dxt/docs/build/Debug/docs; sourceTree = "<absolute>"; };
 		65FD0CCA226493ED006C0B83 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -44,26 +38,7 @@
 			isa = PBXGroup;
 			children = (
 				65FD0CCA226493ED006C0B83 /* index.html */,
-				65FD0CC122648FEC006C0B83 /* docs */,
-				65FD0CC022648FEC006C0B83 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		65FD0CC022648FEC006C0B83 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				65FD0CBF22648FEC006C0B83 /* docs */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		65FD0CC122648FEC006C0B83 /* docs */ = {
-			isa = PBXGroup;
-			children = (
-				65FD0CC222648FEC006C0B83 /* main.cpp */,
-				65FD0CC92264914E006C0B83 /* index.html */,
-			);
-			path = docs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -108,7 +83,7 @@
 				en,
 			);
 			mainGroup = 65FD0CB622648FEC006C0B83;
-			productRefGroup = 65FD0CC022648FEC006C0B83 /* Products */;
+			productRefGroup = 65FD0CB622648FEC006C0B83;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -122,7 +97,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65FD0CC322648FEC006C0B83 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
