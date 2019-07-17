@@ -1,15 +1,14 @@
 /*************************************************************************
 	> File Name: sqltest.c
-	> Author: Daniel
-	> Mail: 292382967@qq.com
+	> Author: Doni Daniel
+	> Mail: sigboom@163.com
 	> Created Time: 三  2/ 6 13:38:07 2019
  ************************************************************************/
 
 #include <stdio.h>
 #include <sqlite3.h>
 
-int callback(void *pv,int argc,char **argv,char **col)
-{
+int callback(void *pv,int argc,char **argv,char **col) {
     int cnt_i = 0;
     for(cnt_i =0;cnt_i < argc;cnt_i++)
         printf("%s\t%s\n",col[cnt_i],argv[cnt_i]);
@@ -17,8 +16,7 @@ int callback(void *pv,int argc,char **argv,char **col)
     return 0;
 }
 
-int main(void)
-{
+int main(void) {
     sqlite3 *db;
     int result = 0;
     char *rerrmsg = NULL;
