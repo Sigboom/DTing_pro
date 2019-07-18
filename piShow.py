@@ -71,6 +71,7 @@ def draw_point(ax, pi, times):
     print(color)
     ax.scatter(theta, r, c=color, s=area, cmap='hsv', alpha=0.3)
 
+
 def main():
     N = 1000
     ch = 'π'
